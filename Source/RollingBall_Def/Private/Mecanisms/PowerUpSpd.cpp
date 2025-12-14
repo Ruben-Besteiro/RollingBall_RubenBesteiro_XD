@@ -2,7 +2,6 @@
 
 
 #include "Mecanisms/PowerUpSpd.h"
-
 #include "Ball.h"
 
 // Sets default values
@@ -17,7 +16,6 @@ APowerUpSpd::APowerUpSpd()
 void APowerUpSpd::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

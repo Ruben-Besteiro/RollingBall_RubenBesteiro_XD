@@ -18,11 +18,12 @@ public:
 	ABall();
 
 	void SetBallController(ABallPlayerController* BallPlayerController);
-	void SetOpacity(float Opacity);
-	void GoTransparent();
-	void ResetTransparency();
+	void Invincible();
+	void Vincible();
 	void SpeedBoost();
 	void ResetSpeed();
+
+	bool IsInvincible = false;
 
 protected:
 	void DamageTaken();
@@ -68,6 +69,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Jump Settings");
 	USoundBase* JumpSound;
+
+	UPROPERTY(EditDefaultsOnly, Category="Ñ");
+	USoundBase* DeathSound;
 
 	// Esto se usará para cambiar la opacidad
 	UPROPERTY()

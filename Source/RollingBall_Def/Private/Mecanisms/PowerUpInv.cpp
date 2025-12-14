@@ -31,7 +31,7 @@ void APowerUpInv::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (OtherActor->ActorHasTag("Player"))
 	{
 		ABall* Player = Cast<ABall>(OtherActor);
-		Player->GoTransparent();
+		Player->Invincible();
 		Destroy();
 	}
 }

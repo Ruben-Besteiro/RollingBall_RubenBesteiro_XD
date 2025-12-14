@@ -27,6 +27,7 @@ ABall::ABall()
 
 	// Config de físicas y peso
 	MyMesh->SetSimulatePhysics(true);
+	MyMesh->SetEnableGravity(true);
 	MyMesh->SetMassOverrideInKg(NAME_None, 100);
 }
 
@@ -47,13 +48,15 @@ void ABall::BeginPlay()
 
 void ABall::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	if(BallController)
+	if (IsInvincible) return;
+	
+	if(BallController && DeathSound)
 	{
+		//UGameplayStatics::PlaySound2D(GetWorld(), DeathSound, 1);		El sonido de muerte lo reproduzco por blueprints para arreglar un bug de Unreal
 		BallController->OnLoseLife();
 	}
 }
 
-// Update de unity
 void ABall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -71,7 +74,6 @@ void ABall::NotifyActorBeginOverlap(AActor* OtherActor)
 	else if (OtherActor->ActorHasTag("DeathZone"))
 	{
 		BallController->OnLoseLife();
-		this->Destroy();
 	}
 }
 
@@ -115,8 +117,9 @@ void ABall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 }
 
-void ABall::GoTransparent()
+void ABall::Invincible()
 {
+	IsInvincible = true;
 	float Opacity = 0.5;
 
 	if (MyMesh)
@@ -154,11 +157,12 @@ void ABall::GoTransparent()
 	}
 
 	FTimerHandle t;
-	GetWorld()->GetTimerManager().SetTimer(t, this, &ABall::ResetTransparency, 5, false);
+	GetWorld()->GetTimerManager().SetTimer(t, this, &ABall::Vincible, 5, false);
 }
 
-void ABall::ResetTransparency()
+void ABall::Vincible()
 {
+	IsInvincible = false;
 	if (MyMesh)
 	{
 		for (int32 i = 0; i < DynamicMaterials.Num(); i++)
