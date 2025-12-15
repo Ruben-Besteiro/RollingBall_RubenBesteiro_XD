@@ -40,6 +40,9 @@ protected:
 	// Salto de la bola
 	void Jump();
 	
+	// Reset de la bola
+	void ResetPlayer();
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -59,6 +62,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Movement Settings");
 	UInputAction* JumpAction;
+
+	UPROPERTY(EditDefaultsOnly, Category="Movement Settings");
+	UInputAction* ResetAction;
 
 	UPROPERTY(EditDefaultsOnly, Category="Movement Settings");
 	float MoveForce;

@@ -93,11 +93,12 @@ void ABall::Jump()
 	if (GetWorld()->LineTraceTestByChannel(GetActorLocation(), RayEnd, ECC_GameTraceChannel1))
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), JumpSound);
-		
 		MyMesh->AddImpulse(FVector::UpVector * JumpForce);
 	}
-	
-	
+}
+
+void ABall::ResetPlayer() {
+	BallController->OnLoseLife();
 }
 
 // Called to bind functionality to input
@@ -112,8 +113,8 @@ void ABall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		// Binding de las acciones
 		// Al triggerear (de forma continua) la accion MoveAction, se llama a la funcion Move
 		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ABall::Move);
-
 		Input->BindAction(JumpAction, ETriggerEvent::Started, this, &ABall::Jump);
+		Input->BindAction(ResetAction, ETriggerEvent::Started, this, &ABall::ResetPlayer);
 	}
 }
 

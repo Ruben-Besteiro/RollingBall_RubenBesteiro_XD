@@ -46,7 +46,7 @@ private:
 
 	// Como blueprintreadonly solo se puede hacer en publico, incluimos lo de  meta para que pueda ser privada la var
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentLives = 3;
+	int32 CurrentLives = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentScore = 0;

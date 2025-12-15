@@ -5,7 +5,8 @@
 
 AThing::AThing()
 {
-	
+	MyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	SetRootComponent(MyMesh);
 }
 
 void AThing::BeginPlay()

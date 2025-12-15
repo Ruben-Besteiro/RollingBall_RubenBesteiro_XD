@@ -35,7 +35,7 @@ void ABallPlayerController::OnLoseLife()
 
 void ABallPlayerController::OnCollectCoin()
 {
-	CurrentScore += 10;
+	CurrentScore += 1;
 
 	UpdateUIScore(CurrentScore);
 }
