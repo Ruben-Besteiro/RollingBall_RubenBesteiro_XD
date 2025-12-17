@@ -29,7 +29,7 @@ void ABallPlayerController::OnLoseLife()
 	}
 	else
 	{
-		GameOver();
+		YouSuck();
 	}
 }
 
@@ -63,7 +63,7 @@ void ABallPlayerController::BeginPlay()
 
 void ABallPlayerController::OnMusicFinished()
 {
-	MusicComponent->Play();
+	if (CurrentLives > 0) MusicComponent->Play();		// En game over es mejor que se calle
 }
 
 void ABallPlayerController::OnPossess(APawn* InPawn)
@@ -93,11 +93,13 @@ void ABallPlayerController::Tick(float DeltaTime)
 	}
 }
 
-void ABallPlayerController::GameOver()
+void ABallPlayerController::YouSuck()
 {
 	bShowMouseCursor = true;
+	MusicComponent->Stop();
+	UGameplayStatics::PlaySound2D(this, YouSuckSound);
 
 	//mostrar widget de gameover
-	auto WidgetCreated = CreateWidget(this, GameOverWidgetClass);
+	auto WidgetCreated = CreateWidget(this, YouSuckWidgetClass);
 	WidgetCreated->AddToViewport();
 }

@@ -76,8 +76,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Jump Settings");
 	USoundBase* JumpSound;
 
-	UPROPERTY(EditDefaultsOnly, Category="Ñ");
+	UPROPERTY(EditDefaultsOnly, Category="Other Sounds");
 	USoundBase* DeathSound;
+
+	UPROPERTY(EditDefaultsOnly, Category="Other Sounds");
+	USoundBase* RingSound;
 
 	// Esto se usará para cambiar la opacidad
 	UPROPERTY()

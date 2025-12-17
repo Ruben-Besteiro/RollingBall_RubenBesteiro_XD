@@ -30,6 +30,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateUITime(int32 NewSeconds);
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
+	int32 CurrentLives = 10;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -45,8 +48,6 @@ private:
 	class UInputMappingContext* ControlsMaps;
 
 	// Como blueprintreadonly solo se puede hacer en publico, incluimos lo de  meta para que pueda ser privada la var
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentLives = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentScore = 0;
@@ -60,11 +61,14 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Music");
 	UAudioComponent* MusicComponent;
 	
-	UPROPERTY(EditAnywhere, Category="Game Over Data")
-	TSubclassOf<UUserWidget> GameOverWidgetClass;
+	UPROPERTY(EditAnywhere, Category="You Suck Data")
+	TSubclassOf<UUserWidget> YouSuckWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "You Suck Data")
+	USoundBase* YouSuckSound;
 
 	UFUNCTION()
 	void OnMusicFinished();
 
-	void GameOver();
+	void YouSuck();
 };

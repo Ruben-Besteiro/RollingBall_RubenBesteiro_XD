@@ -69,6 +69,7 @@ void ABall::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (OtherActor->ActorHasTag("Coin"))
 	{
 		BallController->OnCollectCoin();
+		UGameplayStatics::PlaySound2D(this, RingSound);
 		OtherActor->Destroy();
 	}
 	else if (OtherActor->ActorHasTag("DeathZone"))
@@ -98,7 +99,7 @@ void ABall::Jump()
 }
 
 void ABall::ResetPlayer() {
-	BallController->OnLoseLife();
+	if (BallController->CurrentLives > 0) BallController->OnLoseLife();
 }
 
 // Called to bind functionality to input
@@ -125,8 +126,6 @@ void ABall::Invincible()
 
 	if (MyMesh)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SetOpacity llamado con valor: %f"), Opacity);
-
 		// Almacenamos todos los materiales
 		if (DynamicMaterials.Num() == 0)
 		{
