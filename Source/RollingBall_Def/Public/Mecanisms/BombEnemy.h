@@ -24,8 +24,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Hit (colisión física)
+	
 	virtual void NotifyHit(
 		UPrimitiveComponent* MyComp,
 		AActor* Other,
@@ -58,4 +57,22 @@ private:
 
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	FTimerHandle FlashTimer;
+	bool IsRed = true;
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* RedMaterial;
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* WhiteMaterial;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase* TickSound;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase* BoomSound;
+
+	UFUNCTION()
+	void FlashMaterial();
 };

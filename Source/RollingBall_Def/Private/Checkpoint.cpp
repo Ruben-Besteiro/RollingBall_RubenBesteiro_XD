@@ -39,8 +39,8 @@ void ACheckpoint::NotifyActionBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	PlayerStart->GetRootComponent()->SetMobility(EComponentMobility::Movable);
 	PlayerStart->SetActorLocation(this->GetActorLocation());
 
-	BallController->SavedScore = BallController->CurrentScore;
-
 	// Actualizamos la lista de monedas que hemos pillado (por copia, no por referencia)
 	BallController->CollectedSavedCoins = TArray<AGoldCube*>(BallController->CollectedCoins);
+
+	BallController->SavedScore = BallController->CurrentScore;
 }

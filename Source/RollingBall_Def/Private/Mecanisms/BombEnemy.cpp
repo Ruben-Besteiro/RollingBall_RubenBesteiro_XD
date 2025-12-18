@@ -44,6 +44,8 @@ void ABombEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	if (OtherActor && OtherActor->ActorHasTag("Player"))
 	{
 		Player = Cast<ABall>(OtherActor);
+		IsRed = false;
+		GetWorld()->GetTimerManager().SetTimer(FlashTimer, this, &ABombEnemy::FlashMaterial, 0.5f, true);
 	}
 }
 
@@ -52,6 +54,9 @@ void ABombEnemy::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	if (OtherActor && OtherActor->ActorHasTag("Player"))
 	{
 		Player = nullptr;
+		GetWorld()->GetTimerManager().ClearTimer(FlashTimer);
+		IsRed = true;
+		MyMesh->SetMaterial(0, RedMaterial);
 	}
 }
 
@@ -62,10 +67,26 @@ void ABombEnemy::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiv
 		FVector Fium = (Other->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 		if (Player != nullptr)
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), BoomSound);
 			Player->FindComponentByClass<UStaticMeshComponent>()->AddImpulse(Fium * 500000);
 			Destroy();
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Particles, Hit.Location);
 		}
 		Player = nullptr;
 	}
+}
+
+void ABombEnemy::FlashMaterial()
+{
+	IsRed = !IsRed;
+
+	if (IsRed)
+	{
+		MyMesh->SetMaterial(0, RedMaterial);
+	}
+	else
+	{
+		MyMesh->SetMaterial(0, WhiteMaterial);
+	}
+	UGameplayStatics::PlaySound2D(GetWorld(), TickSound);
 }
