@@ -11,7 +11,7 @@
 
 ABallPlayerController::ABallPlayerController()
 {
-	Contador = 0;
+	Counter = 0;
 }
 
 
@@ -21,22 +21,43 @@ void ABallPlayerController::OnLoseLife()
 	UpdateUILives(CurrentLives);
 
 	APawn* P = GetPawn();
+
+	// Reseteamos los rings
+	TArray<AActor*> Coins;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), "Coin", Coins);
+
+	for (AGoldCube* Coin : CollectedCoins)
+	{
+		if (!CollectedSavedCoins.Contains(Coin))
+		{
+			Coin->SetActorHiddenInGame(false);
+			Coin->SetActorEnableCollision(true);
+			Coin->SetActorTickEnabled(true);
+		}
+	}
+
 	if (CurrentLives > 0)
 	{
+		if (CurrentScore != SavedScore) UGameplayStatics::PlaySound2D(GetWorld(), LoseMoneySound);
+		
+		// Restauramos el score del último checkpoint antes de reiniciar
+		CurrentScore = SavedScore;
+		UpdateUIScore(CurrentScore);
+
 		UnPossess();
 		P->Destroy();
 		GetWorld()->GetAuthGameMode()->RestartPlayer(this);
-	}
-	else
+	} else
 	{
-		YouSuck();
+		GameOver();
 	}
 }
 
-void ABallPlayerController::OnCollectCoin()
-{
-	CurrentScore += 1;
 
+void ABallPlayerController::OnCollectCoin(AGoldCube* Coin)
+{
+	CollectedCoins.Add(Coin);
+	CurrentScore += 1;
 	UpdateUIScore(CurrentScore);
 }
 
@@ -77,9 +98,9 @@ void ABallPlayerController::OnPossess(APawn* InPawn)
 
 void ABallPlayerController::Tick(float DeltaTime)
 {
-	Contador += DeltaTime;
+	Counter += DeltaTime;
 	
-	if ((int)Contador != (int)(Contador - DeltaTime))		// Esto solo será true si no hay ningún decimal
+	if ((int)Counter != (int)(Counter - DeltaTime))		// Esto solo será true si no hay ningún decimal
 	{
 		CurrentTime--;
 		if (CurrentTime > -1)
@@ -93,13 +114,13 @@ void ABallPlayerController::Tick(float DeltaTime)
 	}
 }
 
-void ABallPlayerController::YouSuck()
+void ABallPlayerController::GameOver()
 {
 	bShowMouseCursor = true;
 	MusicComponent->Stop();
-	UGameplayStatics::PlaySound2D(this, YouSuckSound);
+	UGameplayStatics::PlaySound2D(this, GameOverSound);
 
 	//mostrar widget de gameover
-	auto WidgetCreated = CreateWidget(this, YouSuckWidgetClass);
+	auto WidgetCreated = CreateWidget(this, GameOverWidgetClass);
 	WidgetCreated->AddToViewport();
 }

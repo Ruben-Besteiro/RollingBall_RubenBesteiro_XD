@@ -2,6 +2,7 @@
 #include "Components/SphereComponent.h"
 #include "Engine/PlayerStartPIE.h"
 #include "Kismet/GameplayStatics.h"
+#include "BallPlayerController.h"
 
 ACheckpoint::ACheckpoint()
 {
@@ -22,22 +23,13 @@ ACheckpoint::ACheckpoint()
 void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
+	BallController = Cast<ABallPlayerController>(GetWorld()->GetFirstPlayerController());
 }
 
-void ACheckpoint::NotifyActionBeginOverlap(
-	UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor,
-	UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex,
-	bool bFromSweep,
-	const FHitResult& SweepResult
-)
+void ACheckpoint::NotifyActionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Algo ha entrado en el checkpoint"));
 	if (!OtherActor || !OtherActor->ActorHasTag("Player"))
 		return;
-
-	UE_LOG(LogTemp, Warning, TEXT("Checkpoint activado"));
 
 	AActor* PlayerStart = UGameplayStatics::GetActorOfClass(
 		GetWorld(),
@@ -47,5 +39,8 @@ void ACheckpoint::NotifyActionBeginOverlap(
 	PlayerStart->GetRootComponent()->SetMobility(EComponentMobility::Movable);
 	PlayerStart->SetActorLocation(this->GetActorLocation());
 
-	UE_LOG(LogTemp, Warning, TEXT("Posición PlayerStart: %s"), *PlayerStart->GetActorLocation().ToString());
+	BallController->SavedScore = BallController->CurrentScore;
+
+	// Actualizamos la lista de monedas que hemos pillado (por copia, no por referencia)
+	BallController->CollectedSavedCoins = TArray<AGoldCube*>(BallController->CollectedCoins);
 }

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Checkpoint.h"
+#include "Mecanisms/GoldCube.h"
 #include "Components/AudioComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "BallPlayerController.generated.h"
@@ -19,7 +21,7 @@ class ROLLINGBALL_DEF_API ABallPlayerController : public APlayerController
 public:
 	ABallPlayerController();
 	void OnLoseLife();
-	void OnCollectCoin();
+	void OnCollectCoin(AGoldCube* Coin);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateUILives(int32 NewLives);
@@ -33,6 +35,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentLives = 10;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
+	int32 CurrentScore = 0;
+
+	int32 SavedScore = 0;
+
+	UPROPERTY()
+	TArray<class AGoldCube*> CollectedCoins;
+	UPROPERTY()
+	TArray<class AGoldCube*> CollectedSavedCoins;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -41,16 +53,13 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 private:
-	float Contador;
-	int32 Segundos;
+	float Counter;
+	int32 Seconds;
 	
 	UPROPERTY(EditAnywhere, Category = "Inputs")
 	class UInputMappingContext* ControlsMaps;
 
 	// Como blueprintreadonly solo se puede hacer en publico, incluimos lo de  meta para que pueda ser privada la var
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentScore = 0;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
     int32 CurrentTime = 100;
@@ -60,15 +69,18 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Music");
 	UAudioComponent* MusicComponent;
-	
-	UPROPERTY(EditAnywhere, Category="You Suck Data")
-	TSubclassOf<UUserWidget> YouSuckWidgetClass;
 
-	UPROPERTY(EditAnywhere, Category = "You Suck Data")
-	USoundBase* YouSuckSound;
+	UPROPERTY(EditAnywhere, Category = "Music");
+	USoundBase* LoseMoneySound;
+	
+	UPROPERTY(EditAnywhere, Category="Game Over Data")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Game Over Data")
+	USoundBase* GameOverSound;
 
 	UFUNCTION()
 	void OnMusicFinished();
 
-	void YouSuck();
+	void GameOver();
 };

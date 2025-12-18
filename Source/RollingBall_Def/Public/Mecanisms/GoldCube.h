@@ -12,6 +12,9 @@ class ROLLINGBALL_DEF_API AGoldCube : public AActor
 public:
 	AGoldCube();
 
+	UPROPERTY(EditAnywhere)
+	int CoinID;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

@@ -2,12 +2,12 @@
 
 
 #include "Ball.h"
-
 #include "BallPlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Mecanisms/GoldCube.h"
 
 // Sets default values
 ABall::ABall()
@@ -68,9 +68,12 @@ void ABall::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	if (OtherActor->ActorHasTag("Coin"))
 	{
-		BallController->OnCollectCoin();
+		BallController->OnCollectCoin(Cast<AGoldCube>(OtherActor));
 		UGameplayStatics::PlaySound2D(this, RingSound);
-		OtherActor->Destroy();
+
+		OtherActor->SetActorHiddenInGame(true);
+		OtherActor->SetActorEnableCollision(false);
+		OtherActor->SetActorTickEnabled(false);
 	}
 	else if (OtherActor->ActorHasTag("DeathZone"))
 	{
@@ -182,9 +185,11 @@ void ABall::SpeedBoost()
 
 	FTimerHandle t;
 	GetWorld()->GetTimerManager().SetTimer(t,this, &ABall::ResetSpeed,5, false);
+	SetActorScale3D(FVector(0.5, 0.5, 0.5));
 }
 
 void ABall::ResetSpeed()
 {
 	MoveForce = MoveForceInicial;
+	SetActorScale3D(FVector(1, 1, 1));
 }
