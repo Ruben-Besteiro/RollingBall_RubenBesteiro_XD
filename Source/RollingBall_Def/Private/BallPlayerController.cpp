@@ -3,7 +3,7 @@
 
 #include "BallPlayerController.h"
 #include "Ball.h"
-#include "CanvasItem.h"
+#include "PowerUpGG.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/GameModeBase.h"
