@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BallPlayerController.h"
 #include "Mecanisms/PowerUpFium.h"
 #include "PowerUpGG.generated.h"
 
@@ -19,5 +20,5 @@ public:
 	UPROPERTY(EditAnywhere)
 	float GGForce;
 
-	bool IsGG = false;
+	ABallPlayerController* BallController;
 };

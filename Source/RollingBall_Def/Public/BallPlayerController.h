@@ -39,6 +39,7 @@ public:
 	int32 CurrentScore = 0;
 
 	int32 SavedScore = 0;
+	bool isGG = false;
 
 	UPROPERTY()
 	TArray<class AGoldCube*> CollectedCoins;

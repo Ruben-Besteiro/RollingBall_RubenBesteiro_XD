@@ -3,7 +3,6 @@
 
 #include "BallPlayerController.h"
 #include "Ball.h"
-#include "PowerUpGG.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/GameModeBase.h"
@@ -17,8 +16,11 @@ ABallPlayerController::ABallPlayerController()
 
 void ABallPlayerController::OnLoseLife()
 {
-	CurrentLives--;
-	UpdateUILives(CurrentLives);
+	if (!isGG)
+	{
+		CurrentLives--;
+		UpdateUILives(CurrentLives);
+	}
 
 	APawn* P = GetPawn();
 
@@ -103,7 +105,7 @@ void ABallPlayerController::Tick(float DeltaTime)
 	if ((int)Counter != (int)(Counter - DeltaTime))		// Esto solo será true si no hay ningún decimal
 	{
 		CurrentTime--;
-		if (CurrentTime > -1)
+		if (CurrentTime > -1 && !isGG)
 		{
 			UpdateUITime(CurrentTime);
 		} else
@@ -116,11 +118,14 @@ void ABallPlayerController::Tick(float DeltaTime)
 
 void ABallPlayerController::GameOver()
 {
-	bShowMouseCursor = true;
-	MusicComponent->Stop();
-	UGameplayStatics::PlaySound2D(this, GameOverSound);
+	if (!isGG)
+	{
+		bShowMouseCursor = true;
+		MusicComponent->Stop();
+		UGameplayStatics::PlaySound2D(this, GameOverSound);
 
-	//mostrar widget de gameover
-	auto WidgetCreated = CreateWidget(this, GameOverWidgetClass);
-	WidgetCreated->AddToViewport();
+		//mostrar widget de gameover
+		auto WidgetCreated = CreateWidget(this, GameOverWidgetClass);
+		WidgetCreated->AddToViewport();
+	}
 }

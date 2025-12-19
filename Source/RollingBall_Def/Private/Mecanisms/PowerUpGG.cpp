@@ -9,6 +9,7 @@ void APowerUpGG::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	if (OtherActor->ActorHasTag("Player"))
 	{
+		BallController = Cast<ABallPlayerController>(GetWorld()->GetFirstPlayerController());		// Lo que hay dentro del () nos devuelve un PlayerController genérico
 		ABall* Player = Cast<ABall>(OtherActor);
 		if (!Player) return;
 
@@ -17,7 +18,8 @@ void APowerUpGG::NotifyActorBeginOverlap(AActor* OtherActor)
 		{
 			Mesh->AddForce(FVector(-1, 0, 1) * GGForce);
 		}
-		isGG = true;
+		BallController->isGG = true;
+		UE_LOG(LogTemp, Warning, TEXT("%d"), BallController->isGG);
 		Destroy();
 	}
 }
