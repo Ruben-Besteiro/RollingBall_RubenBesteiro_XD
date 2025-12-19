@@ -5,8 +5,11 @@
 #include "Ball.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/TextBlock.h"
+#include "Blueprint/WidgetTree.h"
 
 ABallPlayerController::ABallPlayerController()
 {
@@ -67,6 +70,15 @@ void ABallPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (MainWidgetClass)
+	{
+		MainWidget = CreateWidget<UUserWidget>(this, MainWidgetClass);
+		if (MainWidget)
+		{
+			MainWidget->AddToViewport();
+		}
+	}
+
 	// Get the local player subsystem to add input mapping context
 	auto Input = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 
@@ -105,14 +117,27 @@ void ABallPlayerController::Tick(float DeltaTime)
 	if ((int)Counter != (int)(Counter - DeltaTime))		// Esto solo será true si no hay ningún decimal
 	{
 		CurrentTime--;
-		if (CurrentTime > -1 && !isGG)
+		if (CurrentTime >= 0 && !isGG)
 		{
 			UpdateUITime(CurrentTime);
-		} else
+		} else if (CurrentTime < 0 && !isGG)
 		{
 			CurrentLives = 0;			// Si nos quedamos sin tiempo es GG
 			OnLoseLife();
+		} if (isGG && MainWidget)
+		{
+			TArray<UWidget*> Widgets;
+			MainWidget->WidgetTree->GetAllWidgets(Widgets);
+
+			for (UWidget* Widget : Widgets)
+			{
+				if (UTextBlock* TextBlock = Cast<UTextBlock>(Widget))
+				{
+					TextBlock->SetColorAndOpacity(FSlateColor(FLinearColor::Yellow));
+				}
+			}
 		}
+
 	}
 }
 

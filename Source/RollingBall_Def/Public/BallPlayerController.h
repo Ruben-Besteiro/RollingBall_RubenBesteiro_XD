@@ -6,6 +6,7 @@
 #include "Checkpoint.h"
 #include "Mecanisms/GoldCube.h"
 #include "Components/AudioComponent.h"
+#include "Components/Widget.h"
 #include "GameFramework/PlayerController.h"
 #include "BallPlayerController.generated.h"
 
@@ -40,6 +41,10 @@ public:
 
 	int32 SavedScore = 0;
 	bool isGG = false;
+
+	UPROPERTY(EditAnywhere, Category="UI")
+	TSubclassOf<UUserWidget> MainWidgetClass;
+	UUserWidget* MainWidget;
 
 	UPROPERTY()
 	TArray<class AGoldCube*> CollectedCoins;
