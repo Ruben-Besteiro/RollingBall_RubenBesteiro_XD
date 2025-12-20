@@ -24,11 +24,6 @@ ABall::ABall()
 	RootComponent = MyMesh;
 	MySpringArm->SetupAttachment(MyMesh);
 	MyCamera->SetupAttachment(MySpringArm);
-
-	// Config de físicas y peso
-	MyMesh->SetSimulatePhysics(true);
-	MyMesh->SetEnableGravity(true);
-	MyMesh->SetMassOverrideInKg(NAME_None, 100);
 }
 
 void ABall::SetBallController(ABallPlayerController* BallPlayerController)
@@ -40,6 +35,12 @@ void ABall::SetBallController(ABallPlayerController* BallPlayerController)
 void ABall::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	// Config de físicas y peso
+    MyMesh->SetSimulatePhysics(true);
+    MyMesh->SetEnableGravity(true);
+    MyMesh->SetMassOverrideInKg(NAME_None, 100);
+	
 	OnTakeAnyDamage.AddDynamic(this, &ABall::DamageTaken);
 	UE_LOG(LogTemp, Warning, TEXT("AAAAAAAAAAAAAAAAAAAAA"));
 	MoveForceInicial = MoveForce;
@@ -149,12 +150,11 @@ void ABall::Invincible()
 		}
 
 		// Cambiamos la opacidad de los materiales (como hay varios y no sé cuál de todos es el verdadero pues recorro)
-		for (int32 i = 0; i < DynamicMaterials.Num(); i++)
+		for (int i = 0; i < DynamicMaterials.Num(); i++)
 		{
 			if (DynamicMaterials[i])
 			{
 				DynamicMaterials[i]->SetScalarParameterValue(FName("Opacity"), Opacity);
-				UE_LOG(LogTemp, Warning, TEXT("Material %d - Opacidad cambiada a: %f"), i, Opacity);
 			}
 		}
 	}
@@ -168,12 +168,11 @@ void ABall::Vincible()
 	IsInvincible = false;
 	if (MyMesh)
 	{
-		for (int32 i = 0; i < DynamicMaterials.Num(); i++)
+		for (int i = 0; i < DynamicMaterials.Num(); i++)
 		{
 			if (DynamicMaterials[i])
 			{
 				DynamicMaterials[i]->SetScalarParameterValue(FName("Opacity"), 1);
-				UE_LOG(LogTemp, Warning, TEXT("Material %d - Opacidad restaurada a 1.0"), i);
 			}
 		}
 	}
@@ -185,11 +184,37 @@ void ABall::SpeedBoost()
 
 	FTimerHandle t;
 	GetWorld()->GetTimerManager().SetTimer(t,this, &ABall::ResetSpeed,5, false);
-	SetActorScale3D(FVector(0.5, 0.5, 0.5));
+	
+	TArray<UStaticMeshComponent*> MeshComponents;
+	GetComponents<UStaticMeshComponent>(MeshComponents);
+	for (UStaticMeshComponent* MeshComp : MeshComponents)
+	{
+		MeshComp->SetWorldScale3D(MeshComp->GetComponentScale() * 0.5f);
+	}
+
+	TArray<USpringArmComponent*> SpringArms;
+	GetComponents<USpringArmComponent>(SpringArms);
+	for (USpringArmComponent* SpringArm : SpringArms)
+	{
+		SpringArm->TargetArmLength *= 0.5f;
+	}
 }
 
 void ABall::ResetSpeed()
 {
 	MoveForce = MoveForceInicial;
-	SetActorScale3D(FVector(1, 1, 1));
+
+	TArray<UStaticMeshComponent*> MeshComponents;
+	GetComponents<UStaticMeshComponent>(MeshComponents);
+	for (UStaticMeshComponent* MeshComp : MeshComponents)
+	{
+		MeshComp->SetWorldScale3D(MeshComp->GetComponentScale() * 2);
+	}
+	
+	TArray<USpringArmComponent*> SpringArms;
+	GetComponents<USpringArmComponent>(SpringArms);
+	for (USpringArmComponent* SpringArm : SpringArms)
+	{
+		SpringArm->TargetArmLength *= 2;
+	}
 }

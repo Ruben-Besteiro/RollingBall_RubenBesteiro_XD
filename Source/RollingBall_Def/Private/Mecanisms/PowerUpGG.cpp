@@ -4,6 +4,7 @@
 #include "Mecanisms/PowerUpGG.h"
 
 #include "Ball.h"
+#include "Kismet/GameplayStatics.h"
 
 void APowerUpGG::NotifyActorBeginOverlap(AActor* OtherActor)
 {
@@ -19,7 +20,10 @@ void APowerUpGG::NotifyActorBeginOverlap(AActor* OtherActor)
 			Mesh->AddForce(FVector(-1, 0, 1) * GGForce);
 		}
 		BallController->isGG = true;
-		UE_LOG(LogTemp, Warning, TEXT("%d"), BallController->isGG);
-		Destroy();
+		BallController->MusicComponent->Stop();
+		UGameplayStatics::PlaySound2D(GetWorld(), GGSound);
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
 	}
 }

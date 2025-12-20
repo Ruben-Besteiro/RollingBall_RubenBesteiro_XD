@@ -73,6 +73,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	USoundBase* BoomSound;
 
+	UPROPERTY(EditAnywhere)
+	int BoomForce;
+
 	UFUNCTION()
 	void FlashMaterial();
 };

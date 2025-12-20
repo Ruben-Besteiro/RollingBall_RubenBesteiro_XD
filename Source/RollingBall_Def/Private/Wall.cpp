@@ -26,23 +26,22 @@ void AWall::Tick(float DeltaTime)
 
 void AWall::CheckTargetScore()
 {
-	// Si el jugador vuelve a menos que el requisito → mostrar la pared
+	// Si el jugador vuelve a menos que el requisito -> mostrar la pared
 	if (BallController->CurrentScore < TargetScore)
 	{
 		if (IsHidden())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("REAPARECE LA PARED"));
 			SetActorHiddenInGame(false);
 			SetActorEnableCollision(true);
+			UGameplayStatics::PlaySound2D(GetWorld(), PassSound);
 		}
 	}
 
-	// Si ha llegado al objetivo → esconderlo
+	// Si ha llegado al objetivo -> esconderlo
 	if (BallController->CurrentScore >= TargetScore)
 	{
 		if (!IsHidden())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("DESAPARECE LA PARED"));
 			SetActorHiddenInGame(true);
 			SetActorEnableCollision(false);
 			UGameplayStatics::PlaySound2D(this, PassSound);

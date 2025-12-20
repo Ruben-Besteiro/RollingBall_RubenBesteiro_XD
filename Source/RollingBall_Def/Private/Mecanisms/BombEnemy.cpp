@@ -68,7 +68,7 @@ void ABombEnemy::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiv
 		if (Player != nullptr)
 		{
 			UGameplayStatics::PlaySound2D(GetWorld(), BoomSound);
-			Player->FindComponentByClass<UStaticMeshComponent>()->AddImpulse(Fium * 500000);
+			Player->FindComponentByClass<UStaticMeshComponent>()->AddImpulse(Fium * BoomForce);
 			Destroy();
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Particles, Hit.Location);
 		}

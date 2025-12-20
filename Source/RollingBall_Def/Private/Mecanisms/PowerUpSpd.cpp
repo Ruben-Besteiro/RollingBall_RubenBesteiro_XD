@@ -30,6 +30,8 @@ void APowerUpSpd::NotifyActorBeginOverlap(AActor* OtherActor)
 	{
 		ABall* Player = Cast<ABall>(OtherActor);
 		Player->SpeedBoost();
-		Destroy();
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
 	}
 }

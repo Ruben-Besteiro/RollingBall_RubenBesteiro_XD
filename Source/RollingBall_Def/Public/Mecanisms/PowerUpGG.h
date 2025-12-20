@@ -17,8 +17,11 @@ class ROLLINGBALL_DEF_API APowerUpGG : public APowerUpFium
 public:
 	void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Stuff")
 	float GGForce;
+
+	UPROPERTY(EditAnywhere, Category="Stuff")
+	USoundBase* GGSound;
 
 	ABallPlayerController* BallController;
 };

@@ -30,6 +30,10 @@ void ABP_PushingCylinder::BeginPlay()
 
 	//En unity: rb.AddTorque(Vector, Force);
 	CylinderMesh->AddAngularImpulseInDegrees(FVector::UpVector * ImpulseForce, NAME_None, true);
+
+	CylinderMesh->BodyInstance.bLockXTranslation = true;
+	CylinderMesh->BodyInstance.bLockYTranslation = true;
+	CylinderMesh->BodyInstance.bLockZTranslation = true;
 }
 
 // Called every frame

@@ -24,6 +24,9 @@ AMovingPlatform::AMovingPlatform()
 	// Config de físicas
 	PlatformMesh->SetSimulatePhysics(true);
 	PlatformMesh->SetEnableGravity(false);
+		PlatformMesh->BodyInstance.bLockXRotation = true;
+	PlatformMesh->BodyInstance.bLockYRotation = true;
+	PlatformMesh->BodyInstance.bLockZRotation = true;
 }
 
 // Called when the game starts or when spawned

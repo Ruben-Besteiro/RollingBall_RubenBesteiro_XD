@@ -8,8 +8,8 @@
 #include "Components/TextBlock.h"
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "Components/TextBlock.h"
 #include "Blueprint/WidgetTree.h"
+#include "GameFramework/PlayerStart.h"
 
 ABallPlayerController::ABallPlayerController()
 {
@@ -27,10 +27,10 @@ void ABallPlayerController::OnLoseLife()
 
 	APawn* P = GetPawn();
 
-	// Reseteamos los rings
+	// Reseteamos los rings y los powerups
+	
 	TArray<AActor*> Coins;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), "Coin", Coins);
-
 	for (AGoldCube* Coin : CollectedCoins)
 	{
 		if (!CollectedSavedCoins.Contains(Coin))
@@ -46,12 +46,70 @@ void ABallPlayerController::OnLoseLife()
 		if (CurrentScore != SavedScore) UGameplayStatics::PlaySound2D(GetWorld(), LoseMoneySound);
 		
 		// Restauramos el score del último checkpoint antes de reiniciar
+		int LostMoney = CurrentScore - SavedScore;
 		CurrentScore = SavedScore;
 		UpdateUIScore(CurrentScore);
+
+		TArray<AActor*> PowerUps;
+		UGameplayStatics::GetAllActorsWithTag(GetWorld(), "PowerUp", PowerUps);
+		for (AActor* PowerUp : PowerUps)
+		{
+			PowerUp->SetActorHiddenInGame(false);
+			PowerUp->SetActorEnableCollision(true);
+			PowerUp->SetActorTickEnabled(true);
+		}
 
 		UnPossess();
 		P->Destroy();
 		GetWorld()->GetAuthGameMode()->RestartPlayer(this);
+
+		/*// Código de soltar las monedas
+		TArray<AGoldCube*>CollectedNonSavedCoins;
+		for (int i = 0; i < LostMoney; i++)
+		{
+			CollectedNonSavedCoins.AddUnique(CollectedCoins[i]);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Has perdido %d monedas"), CollectedNonSavedCoins.Num());
+		
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = nullptr;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+		TArray<AActor*> PlayerStarts;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
+		APlayerStart* PlayerStart = Cast<APlayerStart>(PlayerStarts[0]);
+
+		for (int i = 0; i < LostMoney; i++)
+		{
+			// Spawneamos las monedas que perdimos pero sin hitbox (PhysicsOnly)
+			AActor* NewActor = GetWorld()->SpawnActor<AActor>(E, PlayerStart->GetActorLocation(), PlayerStart->GetActorRotation(), SpawnParams);
+			TArray<UPrimitiveComponent*> PrimComps;
+			NewActor->GetComponents<UPrimitiveComponent>(PrimComps);
+			for (UPrimitiveComponent* Comp : PrimComps)
+			{
+				Comp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				Comp->SetSimulatePhysics(true);
+				FVector Impulse = FVector(FMath::FRandRange(-1.f,1.f), FMath::FRandRange(-1.f,1.f), 0.5f) * 100000.f;
+				Comp->AddImpulse(Impulse, NAME_None, true);
+			}
+
+			// Después de medio segundo activamos su hitbox
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, [NewActor]()
+			{
+				if (!NewActor) return;
+
+				TArray<UPrimitiveComponent*> PrimComps;
+				NewActor->GetComponents<UPrimitiveComponent>(PrimComps);
+
+				for (UPrimitiveComponent* Comp : PrimComps)
+				{
+					Comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+					Comp->SetCollisionProfileName(TEXT("OverlapAll"));
+				}
+			}, 0.5f, false);
+		}*/
+
 	} else
 	{
 		GameOver();
@@ -61,6 +119,7 @@ void ABallPlayerController::OnLoseLife()
 
 void ABallPlayerController::OnCollectCoin(AGoldCube* Coin)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnCollectCoin"));
 	CollectedCoins.Add(Coin);
 	CurrentScore += 1;
 	UpdateUIScore(CurrentScore);
@@ -98,7 +157,7 @@ void ABallPlayerController::BeginPlay()
 
 void ABallPlayerController::OnMusicFinished()
 {
-	if (CurrentLives > 0) MusicComponent->Play();		// En game over es mejor que se calle
+	if (CurrentLives > 0 && !isGG) MusicComponent->Play();		// En game over es mejor que se calle
 }
 
 void ABallPlayerController::OnPossess(APawn* InPawn)
@@ -146,7 +205,7 @@ void ABallPlayerController::GameOver()
 	if (!isGG)
 	{
 		bShowMouseCursor = true;
-		MusicComponent->Stop();
+		MusicComponent->DestroyComponent();
 		UGameplayStatics::PlaySound2D(this, GameOverSound);
 
 		//mostrar widget de gameover

@@ -29,13 +29,11 @@ void APowerUpFium::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (OtherActor->ActorHasTag("Player"))
 	{
 		ABall* Player = Cast<ABall>(OtherActor);
-
-		float Random = FMath::FRandRange(-1.0f, 1.0f);
-		float Random2 = FMath::FRandRange(-1.0f, 1.0f);
-		FVector Vector(Random, Random2, 0.25);
-		Vector = Vector.GetSafeNormal();
-		UE_LOG(LogTemp, Warning, TEXT("%f %f %f"), Vector.X, Vector.Y, Vector.Z);
+		FVector Vector(FMath::FRandRange(-1.0f, 1.0f), FMath::FRandRange(-1.0f, 1.0f), 0.25);
+		Vector.Normalize();
 		Player->FindComponentByClass<UStaticMeshComponent>()->AddImpulse(Vector * 500000);
-		Destroy();
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
 	}
 }

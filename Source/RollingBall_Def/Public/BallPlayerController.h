@@ -46,6 +46,9 @@ public:
 	TSubclassOf<UUserWidget> MainWidgetClass;
 	UUserWidget* MainWidget;
 
+	UPROPERTY(EditAnywhere, Category = "Music");
+	UAudioComponent* MusicComponent;
+
 	UPROPERTY()
 	TArray<class AGoldCube*> CollectedCoins;
 	UPROPERTY()
@@ -74,9 +77,6 @@ private:
 	USoundBase* Music;
 
 	UPROPERTY(EditAnywhere, Category = "Music");
-	UAudioComponent* MusicComponent;
-
-	UPROPERTY(EditAnywhere, Category = "Music");
 	USoundBase* LoseMoneySound;
 	
 	UPROPERTY(EditAnywhere, Category="Game Over Data")
@@ -84,6 +84,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Game Over Data")
 	USoundBase* GameOverSound;
+
+	// Esto es necesario para soltar las monedas que perdemos
+	UPROPERTY(EditAnywhere, Category = "E")
+	TSubclassOf<AActor> E;
 
 	UFUNCTION()
 	void OnMusicFinished();
