@@ -60,6 +60,15 @@ void ABombEnemy::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	}
 }
 
+void ABombEnemy::FlashMaterial()
+{
+	IsRed = !IsRed;
+
+	if (IsRed) MyMesh->SetMaterial(0, RedMaterial);
+	else MyMesh->SetMaterial(0, WhiteMaterial);
+	UGameplayStatics::PlaySound2D(GetWorld(), TickSound);
+}
+
 void ABombEnemy::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	if (Other && Other->ActorHasTag("Player"))
@@ -72,21 +81,5 @@ void ABombEnemy::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiv
 			Destroy();
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Particles, Hit.Location);
 		}
-		Player = nullptr;
 	}
-}
-
-void ABombEnemy::FlashMaterial()
-{
-	IsRed = !IsRed;
-
-	if (IsRed)
-	{
-		MyMesh->SetMaterial(0, RedMaterial);
-	}
-	else
-	{
-		MyMesh->SetMaterial(0, WhiteMaterial);
-	}
-	UGameplayStatics::PlaySound2D(GetWorld(), TickSound);
 }

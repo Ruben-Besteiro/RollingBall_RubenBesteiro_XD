@@ -42,6 +42,9 @@ protected:
 	
 	// Reset de la bola
 	void ResetPlayer();
+
+	// Mover cámara
+	void MoveCamera(const FInputActionValue& InputActionValue);
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -65,6 +68,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Movement Settings");
 	UInputAction* ResetAction;
+
+	UPROPERTY(EditDefaultsOnly, Category="Movement Settings");
+	UInputAction* MoveCameraAction;
 
 	UPROPERTY(EditDefaultsOnly, Category="Movement Settings");
 	float MoveForce;

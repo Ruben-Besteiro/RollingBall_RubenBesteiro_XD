@@ -33,6 +33,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateUITime(int32 NewSeconds);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void GG();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Data", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentLives = 10;
 
@@ -42,12 +45,11 @@ public:
 	int32 SavedScore = 0;
 	bool isGG = false;
 
-	UPROPERTY(EditAnywhere, Category="UI")
-	TSubclassOf<UUserWidget> MainWidgetClass;
-	UUserWidget* MainWidget;
-
 	UPROPERTY(EditAnywhere, Category = "Music");
 	UAudioComponent* MusicComponent;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Particles");
+	UParticleSystem* Dust;
 
 	UPROPERTY()
 	TArray<class AGoldCube*> CollectedCoins;

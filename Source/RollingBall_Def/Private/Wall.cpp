@@ -2,7 +2,6 @@
 
 
 #include "Wall.h"
-
 #include "Kismet/GameplayStatics.h"
 
 AWall::AWall()

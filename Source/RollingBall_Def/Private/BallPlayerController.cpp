@@ -33,6 +33,8 @@ void ABallPlayerController::OnLoseLife()
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), "Coin", Coins);
 	for (AGoldCube* Coin : CollectedCoins)
 	{
+		// Las monedas guardadas no vuelven al morir porque si lo hiciesen nos podríamos saltar el objetivo del juego
+		// de conseguir todas las monedas (porque podríamos pillar algunas 2 veces)
 		if (!CollectedSavedCoins.Contains(Coin))
 		{
 			Coin->SetActorHiddenInGame(false);
@@ -59,6 +61,7 @@ void ABallPlayerController::OnLoseLife()
 			PowerUp->SetActorTickEnabled(true);
 		}
 
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Dust, P->GetActorLocation());
 		UnPossess();
 		P->Destroy();
 		GetWorld()->GetAuthGameMode()->RestartPlayer(this);
@@ -120,23 +123,14 @@ void ABallPlayerController::OnLoseLife()
 void ABallPlayerController::OnCollectCoin(AGoldCube* Coin)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnCollectCoin"));
-	CollectedCoins.Add(Coin);
-	CurrentScore += 1;
+	CollectedCoins.Add(Coin);			// CurrentScore es equivalente al tamaño del array de monedas coleccionadas
+	CurrentScore += 1;					// Y lo mismo con SavedScore y el array de monedas guardadas (cuando tocamos un checkpoint)
 	UpdateUIScore(CurrentScore);
 }
 
 void ABallPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (MainWidgetClass)
-	{
-		MainWidget = CreateWidget<UUserWidget>(this, MainWidgetClass);
-		if (MainWidget)
-		{
-			MainWidget->AddToViewport();
-		}
-	}
 
 	// Get the local player subsystem to add input mapping context
 	auto Input = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
@@ -152,6 +146,7 @@ void ABallPlayerController::BeginPlay()
 
 	// Esto es para reiniciar la música cuando se termine
 	MusicComponent->OnAudioFinished.AddDynamic(this, &ABallPlayerController::OnMusicFinished);
+	
 	MusicComponent->Play();
 }
 
@@ -181,22 +176,12 @@ void ABallPlayerController::Tick(float DeltaTime)
 			UpdateUITime(CurrentTime);
 		} else if (CurrentTime < 0 && !isGG)
 		{
-			CurrentLives = 0;			// Si nos quedamos sin tiempo es GG
+			CurrentLives = 0;			// Si nos quedamos sin tiempo es muerte
 			OnLoseLife();
-		} if (isGG && MainWidget)
+		} if (isGG)
 		{
-			TArray<UWidget*> Widgets;
-			MainWidget->WidgetTree->GetAllWidgets(Widgets);
-
-			for (UWidget* Widget : Widgets)
-			{
-				if (UTextBlock* TextBlock = Cast<UTextBlock>(Widget))
-				{
-					TextBlock->SetColorAndOpacity(FSlateColor(FLinearColor::Yellow));
-				}
-			}
+			GG();		// Cambia el texto a amarillo y hace invisible al jugador
 		}
-
 	}
 }
 

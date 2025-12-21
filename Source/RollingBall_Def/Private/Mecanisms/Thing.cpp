@@ -22,7 +22,7 @@ void AThing::Tick(float DeltaTime)
 
 void AThing::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	if (OtherActor->ActorHasTag("Player"))
+	if (OtherActor->ActorHasTag("Player") && !Cast<ABall>(OtherActor)->IsInvincible)
 	{
 		ABall* Ball = Cast<ABall>(OtherActor);
 		UGameplayStatics::ApplyDamage(Ball, 1, nullptr, this, UDamageType::StaticClass());

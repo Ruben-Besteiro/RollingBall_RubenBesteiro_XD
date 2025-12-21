@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "BallPlayerController.h"
 
+// En el vídeo digo que el sistema de checkpoints me costó sobre todo por el tema del reseteo
 ACheckpoint::ACheckpoint()
 {
 	PrimaryActorTick.bCanEverTick = false;

@@ -17,14 +17,8 @@ void AMovingThing::Tick(float DeltaTime)
 	}
 
 	FVector Direction;
-	if (!DirectionFalseXTrueY)
-	{
-		Direction = Sign ? FVector(1, 0, 0) : FVector(-1, 0, 0);
-	}
-	else
-	{
-		Direction = Sign ? FVector(0, 1, 0) : FVector(0, -1, 0);
-	}
+	if (!DirectionFalseXTrueY) Direction = Sign ? FVector(1, 0, 0) : FVector(-1, 0, 0);
+	else  Direction = Sign ? FVector(0, 1, 0) : FVector(0, -1, 0);
 	
 	AddActorLocalOffset(Direction * MoveSpeed * DeltaTime);
 }
